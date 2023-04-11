@@ -14,11 +14,9 @@ class TaskModel {
   async getTaskById(id){
     const connection = await createConnection();
     const query = `
-      SELECT id_task, title, description, status, comment, username as responsible, tags
+      SELECT *
       FROM task
-      INNER JOIN user
-      ON task.id_task = ${id}
-      AND task.id_responsible = user.id_user;`
+      WHERE id_task = ${id}`
     const [result] = await connection.execute(query);
     closeConnection(connection);
     return result;
@@ -27,13 +25,28 @@ class TaskModel {
   async createTask(body){
     const connection = await createConnection();
     const query = `
-    INSERT INTO task (title, description, status)
-    VALUES (${body.title}, ${body.description}, ${body.status})`;
+    INSERT INTO task (title, description, status, comment, responsible, tags)
+    VALUES ('${body.title}', '${body.description}', '${body.status}', '${body.comment}', '${body.responsible}', '${body.tags}')`;
     const [result] = await connection.execute(query);
-    console.log(result?.insertId);
     closeConnection(connection);
-    return result;
+    return result.insertId;
+  }
+
+  async modifyTask(id, body){
+    const keys = Object.keys(body);
+    let set = '';
+    keys.forEach((value) => {
+      set += `${value} = '${body[value]}',`;
+    })
+    set = set.substring(0,set.length-1);
+    const connection = await createConnection();
+    const query = `UPDATE task SET ${set} WHERE id_task = ${id}`;
+    const [result] = await connection.execute(query);
+    closeConnection(connection);
+    return result.info;
   }
 }
 
 module.exports = TaskModel;
+
+// , '${body.status}', '${body.comment}', '${body.responsible}', '${body.tags}

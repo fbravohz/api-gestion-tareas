@@ -47,3 +47,14 @@ FROM task
 INNER JOIN user
 ON task.id_task = 1
 AND task.id_responsible = user.id_user;
+
+
+ALTER TABLE `defaultdb`.`task` 
+DROP FOREIGN KEY `task_user`;
+ALTER TABLE `defaultdb`.`task` 
+DROP INDEX `task_user_idx` ;
+;
+
+ALTER TABLE `defaultdb`.`task` 
+DROP COLUMN `id_responsible`,
+ADD COLUMN `responsible` INT NULL AFTER `comment`;

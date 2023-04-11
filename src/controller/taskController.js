@@ -32,17 +32,23 @@ taskRouter.get('/:id', async (req, res) => {
 })
 
 taskRouter.post('/', async (req, res) => {
-  console.log(": ",req.body);
-  // try {
-  //   taskModel = new TaskModel();
-  //   const result = await taskModel.createTask(req.body);
-  //   console.log("CREATED TASK: ", result);
-  //   // if(result.length === 0)
-  //   //   throw new Error('Error creating task');
-  //   res.status(201).send({created: `/task/`});
-  // }catch(err){
-  //   res.status(400).send({error: err.message});
-  // }
+  try {
+    taskModel = new TaskModel();
+    const result = await taskModel.createTask(req.body);
+    res.status(201).send({created: `/task/${result}`});
+  }catch(err){
+    res.status(400).send({error: err.message});
+  }
+})
+
+taskRouter.put('/:id', async (req, res) => {
+  try {
+    taskModel = new TaskModel();
+    const result = await taskModel.modifyTask(req.params.id, req.body);
+    res.status(201).send({modified: `/task/${req.params.id}`, info: result});
+  }catch(err){
+    res.status(400).send({error: err.message});
+  }
 })
 
 module.exports = { taskRouter };
